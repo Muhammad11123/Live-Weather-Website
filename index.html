@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Live Weather Report</title>
+
+  <!-- Bulma CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Surrey Logo Bar -->
+  <section class="section" style="background-color: #003366; padding: 0.75rem;">
+    <div class="container is-flex is-align-items-center">
+      <img src="images/logo.png" alt="University of Surrey Logo" style="height: 50px;" />
+    </div>
+  </section>
+
+  <!-- Main Heading -->
+  <section class="section" style="background-color: #00b3b3;">
+    <div class="container has-text-centered">
+      <h1 class="title has-text-white">My Weather Report (Unknown User)</h1>
+    </div>
+  </section>  
+
+  <!-- Scrolling Forecast Bar -->
+  <section style="margin: 0;">
+    <marquee behavior="scroll" direction="left" id="guildfordForecast" class="has-text-white is-size-6">
+      Loading forecast for Guildford...
+    </marquee>
+  </section>
+  
+  <!-- Search Section with Background Image -->
+  <section class="search-section">
+    <div class="container is-flex is-justify-content-center is-align-items-center py-5">
+      <div class="field has-addons">
+        <div class="control">
+          <input id="cityInput" class="input" type="text" placeholder="Enter a city..." />
+        </div>
+        <div class="control">
+          <button class="button is-link" onclick="addCity()">Add City</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dynamic Weather Cards -->
+  <section class="section">
+    <div class="container" id="weatherCards"></div>
+  </section>
+
+  <!-- Script -->
+  <script src="scripts.js"></script>
+</body>
+</html>
