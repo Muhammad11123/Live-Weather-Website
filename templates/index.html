@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My Live Weather Report</title>
+  <title>My Weather Report</title>
 
   <!-- Bulma CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
 
-  <!-- Custom Styles -->
-  <link rel="stylesheet" href="styles.css" />
+  <!-- Custom Styles (served from static) -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
 </head>
 <body>
 
   <!-- Surrey Logo Bar -->
   <section class="section" style="background-color: #003366; padding: 0.75rem;">
     <div class="container is-flex is-align-items-center">
-      <img src="images/logo.png" alt="University of Surrey Logo" style="height: 50px;" />
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="University of Surrey Logo" style="height: 50px;" />
     </div>
   </section>
 
@@ -53,7 +53,16 @@
     <div class="container" id="weatherCards"></div>
   </section>
 
-  <!-- Script -->
-  <script src="scripts.js"></script>
+  <!-- Footer -->
+  <footer class="footer has-background-light py-4">
+    <div class="content has-text-centered">
+      <img src="{{ url_for('static', filename='images/bulma.png') }}" alt="Bulma logo" style="height: 20px; vertical-align: middle;" />
+      <span>Styled by <a href="https://bulma.io" target="_blank">Bulma</a></span><br>
+      © 2025 <strong>MA11123</strong>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="{{ url_for('static', filename='scripts.js') }}"></script>
 </body>
 </html>

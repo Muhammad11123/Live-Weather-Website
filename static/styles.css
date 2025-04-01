@@ -1,0 +1,150 @@
+/* General layout and fonts */
+body {
+  background-color: #f6f6f6;
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* Logo section */
+.banner img {
+  height: 50px;
+}
+
+/* Header bar & colors */
+.header-bar {
+  background-color: #01427c;
+  padding: 10px 0;
+}
+
+.header-title {
+  color: #ffffff;
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.user-info {
+  color: #ffffff;
+  text-align: center;
+  font-size: 16px;
+}
+
+/* Scrolling Forecast Banner */
+#guildfordForecast {
+  background-color: #0078d4;
+  color: white;
+  font-size: 14px;
+  text-align: right;
+  padding: 6px 10px;
+  margin: 0;
+  display: block;
+}
+
+/* Search section */
+.search-section {
+  background-image: url("/static/images/image.png"); /* ✅ Flask-compatible path */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 20px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.search-wrapper {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 8px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+}
+
+#cityInput {
+  width: 200px;
+  font-size: 14px;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px 0 0 4px;
+  outline: none;
+}
+
+.button.is-link {
+  font-size: 14px;
+  padding: 8px 14px;
+  background-color: #0078d4;
+  color: white;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+}
+
+.button.is-link:hover {
+  background-color: #005ea2;
+}
+
+/* Weather Cards */
+#weatherCards {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 0;
+}
+
+.weather-card {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  width: 330px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.weather-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+}
+
+.weather-card .left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.weather-card img {
+  height: 45px;
+}
+
+.weather-card h2 {
+  font-size: 20px;
+  margin: 0;
+  font-weight: bold;
+}
+
+.weather-card p {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+.weather-card button {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #888;
+  cursor: pointer;
+}
+
+.weather-card button:hover {
+  color: #f44336;
+}
+
+/* Footer */
+footer.footer {
+  background-color: #dddddd !important;
+  border-top: 1px solid #707070;
+}

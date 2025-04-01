@@ -91,11 +91,11 @@ async function addCity(cityName = null) {
       console.error("Error fetching weather data:", error);
       alert("Something went wrong. Please try again later.");
     }
-  }  
+}  
 
-// Use local weather icons (stored in images/weather-icons/)
+// ✅ Updated for Flask – correct static image path
 function getIconUrl(iconName) {
-  return `images/weather-icons/${iconName}.png`;
+  return `/static/images/weather-icons/${iconName}.png`;
 }
 
 // Update Guildford weather banner
