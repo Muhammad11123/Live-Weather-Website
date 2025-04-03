@@ -1,193 +1,67 @@
 /*
 Database Design (Simulated with localStorage)
+
+NOTE: This file handles all the JavaScript functionality for the weather app.
+It fetches data from the Visual Crossing API and dynamically updates the UI.
 */
 
-const apiKey = "EGX3AFJETNHLRPD76SHJ8L5BJ"; // Visual Crossing API key
-const baseUrl = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline";
+const apiKey = "EGX3AFJETNHLRPD76SHJ8L5BJ"; // My Visual Crossing API key
+const baseUrl = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline"; // Base URL to fetch forecast data
 
-// Add a city card (input or default)
-async function addCity(cityName = null) {
-    const input = document.getElementById("cityInput");
-    const city = cityName || input.value.trim();
-  
-    if (!city || !/^[a-zA-Z\s]+$/.test(city)) {
-      alert("Please enter a valid city name (letters and spaces only).");
-      return;
-    }
-  
-    const cardId = city.toLowerCase();
-    if (document.getElementById(cardId)) {
-      if (!cityName) alert("That city is already on the list!");
-      return;
-    }
-  
-    try {
-      const url = `${baseUrl}/${encodeURIComponent(city)}?unitGroup=metric&key=${apiKey}&contentType=json`;
-      const response = await fetch(url);
-      const data = await response.json();
-  
-      const resolved = data?.resolvedAddress || "";
-      const resolvedParts = resolved.split(",").map(part => part.trim());
-      const resolvedCity = resolvedParts[0];
-  
-      const isValidCity =
-        resolvedParts.length >= 2 &&
-        resolvedCity.length > 1 &&
-        data.latitude !== 0 &&
-        data.longitude !== 0 &&
-        data.days?.length > 0;
-  
-      if (!isValidCity) {
-        alert("City not found. Please enter a real city.");
-        return;
-      }
-  
-      const today = data.days[0];
-      const icon = getIconUrl(today.icon);
-  
-      const card = document.createElement("div");
-      card.className = "weather-card";
-      card.id = cardId;
-  
-      card.innerHTML = `
-        <div class="left">
-          <img src="${icon}" alt="Weather icon" />
-          <div>
-            <h2>${resolvedCity}</h2>
-            <p>${today.temp.toFixed(1)}°C</p>
-            <p>${today.conditions}</p>
-          </div>
-        </div>
-        <button onclick="removeCity('${cardId}')">✖</button>
-      `;
-  
-      document.getElementById("weatherCards").appendChild(card);
-      if (!cityName) input.value = "";
-  
-      saveCity(resolvedCity);
-    } catch (error) {
-      console.error("Error fetching weather data:", error);
-      alert("Something went wrong. Please try again later.");
-    }
-}  
-
-// ✅ Updated for Flask – correct static image path
-function getIconUrl(iconName) {
-  return `/static/images/weather-icons/${iconName}.png`;
-}
-
-// Update Guildford weather banner
-async function updateGuildfordForecast() {
-  const banner = document.getElementById("guildfordForecast");
-  const city = "Guildford";
-
-  try {
-    const url = `${baseUrl}/${encodeURIComponent(city)}?unitGroup=metric&key=${apiKey}&contentType=json`;
-    const response = await fetch(url);
-    const data = await response.json();
-
-    const today = data.days[0];
-    const tomorrow = data.days[1];
-
-    const todayText = `${today.temp.toFixed(1)}°C – ${today.conditions}`;
-    const tomorrowText = `${tomorrow.temp.toFixed(1)}°C – ${tomorrow.conditions}`;
-
-    banner.textContent = `Guildford Now: ${todayText} | Tomorrow: ${tomorrowText}`;
-  } catch (err) {
-    console.error("Failed to load Guildford forecast:", err);
-    banner.textContent = "Unable to load Guildford forecast.";
-  }
-}
-
-// Remove a city card and from local storage
-function removeCity(id) {
-  const card = document.getElementById(id);
-  if (card) card.remove();
-
-  const saved = getSavedCities();
-  const updated = saved.filter(city => city.toLowerCase() !== id);
-  localStorage.setItem("cities", JSON.stringify(updated));
-}
-
-// Save a city to local storage
-function saveCity(city) {
-  const saved = getSavedCities();
-  if (!saved.includes(city)) {
-    saved.push(city);
-    localStorage.setItem("cities", JSON.stringify(saved));
-  }
-}
-
-// Get saved cities
-function getSavedCities() {
-  const cities = localStorage.getItem("cities");
-  return cities ? JSON.parse(cities) : [];
-}
-
-// Load initial cities (defaults if none saved)
-function loadInitialCities() {
-  const saved = getSavedCities();
-  if (saved.length > 0) {
-    saved.forEach(city => addCity(city));
-  } else {
-    ["Tokyo", "New York", "London"].forEach(city => addCity(city));
-  }
-}
-
-// Page onload
-window.onload = () => {
-  loadInitialCities();
-  updateGuildfordForecast();
-
-  const input = document.getElementById("cityInput");
-  input.focus();
-
-  input.addEventListener("keypress", function (e) {
-    if (e.key === "Enter") {
-      addCity();
-    }
-  });const apiKey = "EGX3AFJETNHLRPD76SHJ8L5BJ"; // Visual Crossing API key
-const baseUrl = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline";
-
-// Add a city card (input or default)
+// Function to add a new city card (either from user input or default)
 async function addCity(cityName = null) {
   const input = document.getElementById("cityInput");
-  const city = cityName || input.value.trim();
+  const city = cityName || input.value.trim(); // Use input or default
 
+  // Validation to check if user entered a valid city
   if (!city || !/^[a-zA-Z\s]+$/.test(city)) {
     alert("Please enter a valid city name (letters and spaces only).");
     return;
   }
 
   const cardId = city.toLowerCase();
+
+  // Avoid duplicates on the page
   if (document.getElementById(cardId)) {
     if (!cityName) alert("That city is already on the list!");
     return;
   }
 
   try {
+    // Fetch weather data from the API
     const url = `${baseUrl}/${encodeURIComponent(city)}?unitGroup=metric&key=${apiKey}&contentType=json`;
     const response = await fetch(url);
     const data = await response.json();
 
-    const resolvedCity = data?.resolvedAddress?.split(",")[0]?.trim();
-    const today = data?.days?.[0];
+    // Get the resolved city name from the response
+    const resolved = data?.resolvedAddress || "";
+    const resolvedParts = resolved.split(",").map(part => part.trim());
+    const resolvedCity = resolvedParts[0];
 
-    // ✅ Smarter check for valid data
+    // Basic validity check on the response
     const isValidCity =
-      resolvedCity && resolvedCity.length > 0 &&
-      typeof data.latitude === "number" &&
-      typeof data.longitude === "number" &&
-      Array.isArray(data.days) &&
-      data.days.length > 0;
+      resolvedParts.length >= 2 &&
+      resolvedCity.length > 1 &&
+      data.latitude !== 0 &&
+      data.longitude !== 0 &&
+      data.days?.length > 0;
 
     if (!isValidCity) {
       alert("City not found. Please enter a real city.");
       return;
     }
 
-    const icon = getIconUrl(today.icon);
+    const today = data.days[0]; // Today’s weather details
 
+    // Get appropriate icon URL (checks if day or night)
+    const icon = getIconUrl(
+      today.icon,
+      today.sunrise,
+      today.sunset,
+      data.currentConditions.datetime
+    );
+
+    // Create the weather card HTML
     const card = document.createElement("div");
     card.className = "weather-card";
     card.id = cardId;
@@ -204,22 +78,44 @@ async function addCity(cityName = null) {
       <button onclick="removeCity('${cardId}')">✖</button>
     `;
 
+    // Append the card to the main container
     document.getElementById("weatherCards").appendChild(card);
-    if (!cityName) input.value = "";
 
-    saveCity(resolvedCity);
+    // Clear the input after adding a city
+    if (!cityName) input.value = "";
   } catch (error) {
     console.error("Error fetching weather data:", error);
     alert("Something went wrong. Please try again later.");
   }
 }
 
-// ✅ Updated for Flask static path
-function getIconUrl(iconName) {
+// Function to get the correct weather icon based on time of day
+function getIconUrl(iconName, sunrise, sunset, currentTimeStr) {
+  const now = new Date();
+  const [hours, minutes] = currentTimeStr.split(":").map(Number);
+  now.setHours(hours, minutes); // Set current time
+
+  const sunriseTime = new Date();
+  const [sunriseH, sunriseM] = sunrise.split(":").map(Number);
+  sunriseTime.setHours(sunriseH, sunriseM);
+
+  const sunsetTime = new Date();
+  const [sunsetH, sunsetM] = sunset.split(":").map(Number);
+  sunsetTime.setHours(sunsetH, sunsetM);
+
+  const isNight = now < sunriseTime || now > sunsetTime;
+
+  // Return night version of icon if it's nighttime
+  if (isNight) {
+    if (iconName === "clear-day") return "/static/images/weather-icons/clear-night.png";
+    if (iconName === "partly-cloudy-day") return "/static/images/weather-icons/partly-cloudy-night.png";
+  }
+
+  // Return regular icon path
   return `/static/images/weather-icons/${iconName}.png`;
 }
 
-// Update Guildford forecast banner
+// Function to update the Guildford forecast banner at the top
 async function updateGuildfordForecast() {
   const banner = document.getElementById("guildfordForecast");
   const city = "Guildford";
@@ -232,6 +128,7 @@ async function updateGuildfordForecast() {
     const today = data.days[0];
     const tomorrow = data.days[1];
 
+    // Format the banner text
     const todayText = `${today.temp.toFixed(1)}°C – ${today.conditions}`;
     const tomorrowText = `${tomorrow.temp.toFixed(1)}°C – ${tomorrow.conditions}`;
 
@@ -242,49 +139,26 @@ async function updateGuildfordForecast() {
   }
 }
 
-// Remove a city
+// Function to remove a weather card from the page
 function removeCity(id) {
   const card = document.getElementById(id);
   if (card) card.remove();
-
-  const saved = getSavedCities();
-  const updated = saved.filter(city => city.toLowerCase() !== id);
-  localStorage.setItem("cities", JSON.stringify(updated));
 }
 
-// Save to localStorage
-function saveCity(city) {
-  const saved = getSavedCities();
-  if (!saved.includes(city)) {
-    saved.push(city);
-    localStorage.setItem("cities", JSON.stringify(saved));
-  }
-}
-
-// Load from localStorage
-function getSavedCities() {
-  const cities = localStorage.getItem("cities");
-  return cities ? JSON.parse(cities) : [];
-}
-
-// Load default cities
+// Load default cities on initial page load (resets every time)
 function loadInitialCities() {
-  const saved = getSavedCities();
-  if (saved.length > 0) {
-    saved.forEach(city => addCity(city));
-  } else {
-    ["Tokyo", "New York", "London"].forEach(city => addCity(city));
-  }
+  ["New York", "London", "Tokyo"].forEach(city => addCity(city));
 }
 
-// On page load
+// Everything runs after the page finishes loading
 window.onload = () => {
-  loadInitialCities();
-  updateGuildfordForecast();
+  loadInitialCities(); // Show default cities
+  updateGuildfordForecast(); // Show Guildford banner
 
   const input = document.getElementById("cityInput");
   input.focus();
 
+  // Add city when pressing Enter key
   input.addEventListener("keypress", function (e) {
     if (e.key === "Enter") {
       addCity();
