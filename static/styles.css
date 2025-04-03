@@ -11,39 +11,35 @@ body {
   height: 50px;
 }
 
-/* Header bar & colors */
-.header-bar {
-  background-color: #01427c;
-  padding: 10px 0;
-}
-
-.header-title {
-  color: #ffffff;
-  text-align: center;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.user-info {
-  color: #ffffff;
-  text-align: center;
-  font-size: 16px;
-}
-
-/* Scrolling Forecast Banner */
-#guildfordForecast {
+/* Forecast scrolling banner */
+.scroll-banner {
   background-color: #0078d4;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 6px 0;
+  position: relative;
+}
+
+.scroll-text {
+  display: inline-block;
+  padding-left: 100%;
+  animation: scroll-left 15s linear infinite;
   color: white;
   font-size: 14px;
-  text-align: right;
-  padding: 6px 10px;
-  margin: 0;
-  display: block;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }
 
 /* Search section */
 .search-section {
-  background-image: url("/static/images/image.png"); /* ✅ Flask-compatible path */
+  background-image: url("/static/images/image.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
