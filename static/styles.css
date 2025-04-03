@@ -11,16 +11,35 @@ body {
   height: 50px;
 }
 
-/* Forecast scrolling banner */
-.scroll-banner {
+/* Header bar & colors */
+.header-bar {
+  background-color: #01427c;
+  padding: 10px 0;
+}
+
+.header-title {
+  color: #ffffff;
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.user-info {
+  color: #ffffff;
+  text-align: center;
+  font-size: 16px;
+}
+
+/* Scrolling Forecast Banner */
+#forecastBar {
   background-color: #0078d4;
   overflow: hidden;
   white-space: nowrap;
   padding: 6px 0;
-  position: relative;
+  margin: 0;
 }
 
-.scroll-text {
+.scrolling-text {
   display: inline-block;
   padding-left: 100%;
   animation: scroll-left 15s linear infinite;
