@@ -27,90 +27,94 @@ CREATE TABLE weather_forecast (
 const apiKey = "EGX3AFJETNHLRPD76SHJ8L5BJ"; // Visual Crossing API key
 const baseUrl = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline";
 
-// Add a city card 
+// Add a city card (input or default)
 async function addCity(cityName = null) {
-  const input = document.getElementById("cityInput");
-  const city = cityName || input.value.trim();
-
-  if (!city) {
-    alert("Please enter a valid city name.");
-    return;
-  }
-
-  const cardId = city.toLowerCase().replace(/\s+/g, "-");
-  if (document.getElementById(cardId)) {
-    if (!cityName) alert("That city is already on the list!");
-    return;
-  }
-
-  try {
-    const url = `${baseUrl}/${encodeURIComponent(city)}?unitGroup=metric&key=${apiKey}&contentType=json`;
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      throw new Error("API request failed");
-    }
-
-    const data = await response.json();
-
-    const today = data?.days?.[0];
-    if (!today || typeof today.temp === "undefined") {
-      alert("City not found. Please enter a real city.");
+    const input = document.getElementById("cityInput");
+    const city = cityName || input.value.trim();
+  
+    if (!city || !/^[a-zA-Z\s]+$/.test(city)) {
+      alert("Please enter a valid city name (letters and spaces only).");
       return;
     }
-
-    const resolvedCity = data.resolvedAddress?.split(",")[0]?.trim() || city;
-    const icon = getIconUrl(today.icon);
-
-    const card = document.createElement("div");
-    card.className = "weather-card";
-    card.id = cardId;
-
-    card.innerHTML = `
-      <div class="left">
-        <img src="${icon}" alt="Weather icon" />
-        <div>
-          <h2>${resolvedCity}</h2>
-          <p>${today.temp.toFixed(1)}°C</p>
-          <p>${today.conditions}</p>
+  
+    const cardId = city.toLowerCase();
+    if (document.getElementById(cardId)) {
+      if (!cityName) alert("That city is already on the list!");
+      return;
+    }
+  
+    try {
+      const url = ${baseUrl}/${encodeURIComponent(city)}?unitGroup=metric&key=${apiKey}&contentType=json;
+      const response = await fetch(url);
+      const data = await response.json();
+  
+      const resolved = data?.resolvedAddress || "";
+      const resolvedParts = resolved.split(",").map(part => part.trim());
+      const resolvedCity = resolvedParts[0];
+  
+      const isValidCity =
+        resolvedParts.length >= 2 &&
+        resolvedCity.length > 1 &&
+        data.latitude !== 0 &&
+        data.longitude !== 0 &&
+        data.days?.length > 0;
+  
+      if (!isValidCity) {
+        alert("City not found. Please enter a real city.");
+        return;
+      }
+  
+      const today = data.days[0];
+      const icon = getIconUrl(today.icon);
+  
+      const card = document.createElement("div");
+      card.className = "weather-card";
+      card.id = cardId;
+  
+      card.innerHTML = 
+        <div class="left">
+          <img src="${icon}" alt="Weather icon" />
+          <div>
+            <h2>${resolvedCity}</h2>
+            <p>${today.temp.toFixed(1)}°C</p>
+            <p>${today.conditions}</p>
+          </div>
         </div>
-      </div>
-      <button onclick="removeCity('${cardId}')">✖</button>
-    `;
+        <button onclick="removeCity('${cardId}')">✖</button>
+      ;
+  
+      document.getElementById("weatherCards").appendChild(card);
+      if (!cityName) input.value = "";
+  
+      saveCity(resolvedCity);
+    } catch (error) {
+      console.error("Error fetching weather data:", error);
+      alert("Something went wrong. Please try again later.");
+    }
+}  
 
-    document.getElementById("weatherCards").appendChild(card);
-    if (!cityName) input.value = "";
-
-    saveCity(resolvedCity);
-  } catch (error) {
-    console.error("Error fetching weather data:", error);
-    alert("Something went wrong. Please try again later.");
-  }
-}
-
-
-// Static image path
+// ✅ Updated for Flask – correct static image path
 function getIconUrl(iconName) {
-  return `/static/images/weather-icons/${iconName}.png`;
+  return /static/images/weather-icons/${iconName}.png;
 }
 
-// Guildford weather banner
+// Update Guildford weather banner
 async function updateGuildfordForecast() {
   const banner = document.getElementById("guildfordForecast");
   const city = "Guildford";
 
   try {
-    const url = `${baseUrl}/${encodeURIComponent(city)}?unitGroup=metric&key=${apiKey}&contentType=json`;
+    const url = ${baseUrl}/${encodeURIComponent(city)}?unitGroup=metric&key=${apiKey}&contentType=json;
     const response = await fetch(url);
     const data = await response.json();
 
     const today = data.days[0];
     const tomorrow = data.days[1];
 
-    const todayText = `${today.temp.toFixed(1)}°C – ${today.conditions}`;
-    const tomorrowText = `${tomorrow.temp.toFixed(1)}°C – ${tomorrow.conditions}`;
+    const todayText = ${today.temp.toFixed(1)}°C – ${today.conditions};
+    const tomorrowText = ${tomorrow.temp.toFixed(1)}°C – ${tomorrow.conditions};
 
-    banner.textContent = `Guildford Now: ${todayText} | Tomorrow: ${tomorrowText}`;
+    banner.textContent = Guildford Now: ${todayText} | Tomorrow: ${tomorrowText};
   } catch (err) {
     console.error("Failed to load Guildford forecast:", err);
     banner.textContent = "Unable to load Guildford forecast.";
